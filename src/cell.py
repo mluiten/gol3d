@@ -9,27 +9,48 @@ class Cell(object):
     
     Also contains links to its neighbors
     """
+    
+    COLOR = (255, 255, 255)
+    
+    def __new__(cls, *args, **kwargs):
+        if cls == Cell:
+            raise TypeError("Can't initiate Cell directly")
+        else:
+            return object.__new__(cls, *args, **kwargs)
 
-    LIVE = 1
-    DEAD = 0
-
-    def __init__(self, x, y, z):
-        self.state = Cell.DEAD
-        self.location = (x, y, z)
-        self.__neighbors = []
+    def __init__(self, location=None, copy=None, neighborhood=None):
+        if copy:
+            self.location = copy.location
+            self.neighborhood = copy.neighborhood
+        elif location:
+            self.location = location
+        else:
+            raise ValueError('At least one of location/copy needs to be provided')
+        
+        if neighborhood:
+            self.neighborhood = neighborhood
         
     def get_neighbors(self):
-        return self.__neighbors
-    
-    def add_neighbor(self, neighbor):
-        if neighbor is not None:
-            self.__neighbors.append(neighbor)
+        return self.neighborhood(self)
     
     def get_alive_neighbors(self):
-        return [n for n in self.neighbors if n.state == Cell.LIVE]
+        return [n for n in self.neighbors if str(n).startswith('alive')]
     
     def get_dead_neighbors(self):
-        return [n for n in self.neighbors if n.state == Cell.DEAD]
+        return [n for n in self.neighbors if str(n).startswith('dead')]
+    
+    def tick(self):
+        pass
+    
+    def factory(self, cell):
+        from cells.dead_cell import DeadCell
+        from cells.red_cell import RedCell
+        
+        values = {'dead': DeadCell,
+                  'red': RedCell}
+        
+        return values.get(cell)(copy=self)
+        
 
     neighbors = property(get_neighbors)
     neighbors_alive = property(get_alive_neighbors)

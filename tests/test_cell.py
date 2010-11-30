@@ -11,8 +11,8 @@ class CellTest(unittest.TestCase):
     """ Tests the Cell class """
 
     def setUp(self):
-        self.cell = Cell(1,1,1)
-        self.cell2 = Cell(0, 1, 2)
+        self.cell = Cell((1,1,1))
+        self.cell2 = Cell((0, 1, 2))
 
     def tearDown(self):
         pass
@@ -27,7 +27,7 @@ class CellTest(unittest.TestCase):
         
         self.assertListEqual(self.cell.get_neighbors(), [self.cell2])
         
-        cell3 = Cell(2,2,2)
+        cell3 = Cell((2,2,2))
         self.cell.add_neighbor(cell3)
         
         self.assertIn(self.cell2, self.cell.get_neighbors())
